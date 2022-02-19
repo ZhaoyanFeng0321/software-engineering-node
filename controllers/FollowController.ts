@@ -9,7 +9,7 @@ class Follows {
 }
 
 /**
- * @class TuitController Implements RESTful Web service API for follows resource.
+ * @class FollowController Implements RESTful Web service API for follows resource.
  * Defines the following HTTP endpoints:
  * <ul>
  *     <li>POST /users/:uid/follows/:xuid to record that user follows another user
@@ -36,7 +36,7 @@ export default class FollowController implements FollowControllerI {
      * Creates singleton controller instance
      * @param {Express} app Express instance to declare the RESTful Web service
      * API
-     * @return TuitController
+     * @return FollowController
      */
     public static getInstance = (app: Express): FollowController => {
         if(FollowController.followController === null) {
