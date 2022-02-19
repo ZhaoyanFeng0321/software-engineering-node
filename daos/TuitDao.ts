@@ -26,4 +26,8 @@ export default class TuitDao implements TuitDaoI{
             {$set: tuit});
     deleteTuit = async (uid: string): Promise<any> =>
         TuitModel.deleteOne({_id: uid});
+
+    createTuit = async(tuit: Tuit): Promise<Tuit> =>
+        TuitModel.create(tuit);
+
 }

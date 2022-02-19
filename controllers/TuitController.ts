@@ -2,25 +2,34 @@ import TuitDao from "../daos/TuitDao";
 import Tuit from "../models/tuits/Tuit";
 import {Express, Request, Response} from "express";
 import TuitControllerI from "../interfaces/TuitControllerI";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
+import User from "../models/users/User";
 
 export default class TuitController implements TuitControllerI {
     private static tuitDao: TuitDao = TuitDao.getInstance();
     private static tuitController: TuitController | null = null;
     public static getInstance = (app: Express): TuitController => {
-        if(TuitController.tuitController === null) {
+        if (TuitController.tuitController === null) {
             TuitController.tuitController = new TuitController();
             app.get("/api/tuits", TuitController.tuitController.findAllTuits);
             app.get("/api/users/:uid/tuits", TuitController.tuitController.findAllTuitsByUser);
             app.get("/api/tuits/:uid", TuitController.tuitController.findTuitById);
             app.post("/api/users/:uid/tuits", TuitController.tuitController.createTuitByUser);
+            app.post("/api/tuits", TuitController.tuitController.createTuit);
             app.put("/api/tuits/:uid", TuitController.tuitController.updateTuit);
             app.delete("/api/tuits/:uid", TuitController.tuitController.deleteTuit);
         }
         return TuitController.tuitController;
     }
 
-    private constructor() {}
-    
+    private constructor() {
+    }
+
+    createTuit = (req: Request, res: Response) =>
+        TuitController.tuitDao.createTuit(req.body)
+            .then((tuit: Tuit) => res.json(tuit));
+
     findAllTuits = (req: Request, res: Response) =>
         TuitController.tuitDao.findAllTuits()
             .then((tuits: Tuit[]) => res.json(tuits));

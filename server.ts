@@ -8,6 +8,8 @@ mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tui
 import bodyParser from "body-parser";
 import UserController from "./controllers/UserController";
 import TuitController from "./controllers/TuitController";
+import LikeController from "./controllers/LikeController";
+
 const app = express();
 app.use(bodyParser.json())
 
@@ -19,6 +21,7 @@ app.get('/add/:a/:b', (req: Request, res: Response) =>
 
 const userController = UserController.getInstance(app);
 const tuitController = TuitController.getInstance(app);
+const likesController = LikeController.getInstance(app);
 
 const PORT = 4000;
 app.listen(process.env.PORT || PORT);
