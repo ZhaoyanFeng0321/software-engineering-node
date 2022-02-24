@@ -14,17 +14,13 @@ export default class MessageDao implements MessageDaoI{
     private constructor() {}
 
     findAllMessagesFromUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({from: uid}).populate("message")
-            .exec();
+        MessageModel.find({from: uid});
 
     findAllMessagesToUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({to: uid}).populate("message")
-            .exec();
+        MessageModel.find({to: uid});
 
     findUserMessagesUser = async (uid: string, xuid: string): Promise<Message[]> =>
-        MessageModel.find({from: uid, to: xuid})
-            .populate("message")
-            .exec();
+        MessageModel.find({from: uid, to: xuid});
 
     sendMessage = async (uid: string, xuid: string, message: Message): Promise<Message> =>
         MessageModel.create({...message, from: uid, to: xuid});
