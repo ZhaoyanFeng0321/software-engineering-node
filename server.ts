@@ -3,7 +3,6 @@
  */
 import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
-mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
 import bodyParser from "body-parser";
 import UserController from "./controllers/UserController";
@@ -12,6 +11,9 @@ import LikeController from "./controllers/LikeController";
 import FollowController from "./controllers/FollowController";
 import BookmarkController from "./controllers/BookmarkController";
 import MessageController from "./controllers/MessageController";
+
+mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
+
 
 const app = express();
 app.use(bodyParser.json())
