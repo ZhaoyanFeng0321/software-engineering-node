@@ -38,8 +38,7 @@ export default class LikeController implements LikeControllerI {
             app.get("/api/users/:uid/likes", LikeController.likeController.findAllTuitsLikedByUser);
             app.get("/api/tuits/:tid/likes", LikeController.likeController.findAllUsersThatLikedTuit);
             app.post("/api/users/:uid/likes/:tid", LikeController.likeController.userLikesTuit);
-            app.delete("/api/users/:uid/unlikes/:tid", LikeController.likeController.userUnlikesTuit);
-            app.get("/api/likes", LikeController.likeController.findAllLikes);
+            app.delete("/api/users/:uid/likes/:tid", LikeController.likeController.userUnlikesTuit);
         }
         return LikeController.likeController;
     }
@@ -90,8 +89,4 @@ export default class LikeController implements LikeControllerI {
     userUnlikesTuit = (req: Request, res: Response) =>
         LikeController.likeDao.userUnlikesTuit(req.params.uid, req.params.tid)
             .then(status => res.send(status));
-
-    findAllLikes = (req: Request, res: Response) =>
-        LikeController.likeDao.findAllLikes()
-            .then((likes: Like[]) => res.json(likes));
 };

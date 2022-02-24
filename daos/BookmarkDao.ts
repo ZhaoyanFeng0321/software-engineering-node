@@ -1,6 +1,8 @@
 import BookmarkDaoI from "../interfaces/BookmarkDaoI";
 import BookmarkModel from "../mongoose/bookmarks/BookmarkModel";
 import Bookmark from "../models/bookmarks/Bookmark";
+import Tuit from "../models/tuits/Tuit";
+import TuitModel from "../mongoose/tuits/TuitModel";
 
 export default class BookmarkDao implements BookmarkDaoI {
     private static bookmarkDao: BookmarkDao | null = null;
@@ -27,7 +29,7 @@ export default class BookmarkDao implements BookmarkDaoI {
     userUnbookmarksTuit = async (uid: string, tid: string): Promise<any> =>
         BookmarkModel.deleteOne({bookmarkedUser: uid, bookmarkedTuit: tid});
 
-    findAllBookmarks(): Promise<Bookmark[]> {
-        return Promise.resolve([]);
-    }
+    findAllBookmarks = async (): Promise<Bookmark[]> =>
+            BookmarkModel.find();
+
 }
