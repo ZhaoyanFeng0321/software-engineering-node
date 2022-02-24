@@ -4,6 +4,7 @@
 import {Express, Request, Response} from "express";
 import LikeDao from "../daos/LikeDao";
 import LikeControllerI from "../interfaces/LikeControllerI";
+import Like from "../models/likes/Like";
 
 /**
  * @class LikeController Implements RESTful Web service API for likes resource.
@@ -38,6 +39,7 @@ export default class LikeController implements LikeControllerI {
             app.get("/api/tuits/:tid/likes", LikeController.likeController.findAllUsersThatLikedTuit);
             app.post("/api/users/:uid/likes/:tid", LikeController.likeController.userLikesTuit);
             app.delete("/api/users/:uid/unlikes/:tid", LikeController.likeController.userUnlikesTuit);
+            app.get("/api/likes", LikeController.likeController.findAllLikes);
         }
         return LikeController.likeController;
     }
@@ -88,4 +90,8 @@ export default class LikeController implements LikeControllerI {
     userUnlikesTuit = (req: Request, res: Response) =>
         LikeController.likeDao.userUnlikesTuit(req.params.uid, req.params.tid)
             .then(status => res.send(status));
+
+    findAllLikes = (req: Request, res: Response) =>
+        LikeController.likeDao.findAllLikes()
+            .then((likes: Like[]) => res.json(likes));
 };
