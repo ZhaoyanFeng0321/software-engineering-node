@@ -1,6 +1,7 @@
 import MessageModel from "../mongoose/messages/MessageModel";
 import Message from "../models/messages/Message";
 import MessageDaoI from "../interfaces/MessageDaoI";
+
 export default class MessageDao implements MessageDaoI{
     private static messageDao: MessageDao | null = null;
     public static getInstance = (): MessageDao => {
@@ -13,10 +14,12 @@ export default class MessageDao implements MessageDaoI{
     private constructor() {}
 
     findAllMessagesFromUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({from: uid});
+        MessageModel.find({from: uid}).populate("message")
+            .exec();
 
     findAllMessagesToUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({to: uid});
+        MessageModel.find({to: uid}).populate("message")
+            .exec();
 
     findUserMessagesUser = async (uid: string, xuid: string): Promise<Message[]> =>
         MessageModel.find({from: uid, to: xuid})

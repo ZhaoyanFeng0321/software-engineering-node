@@ -11,6 +11,7 @@ export default class LikeDao implements LikeDaoI {
         return LikeDao.likeDao;
     }
     private constructor() {}
+
     findAllUsersThatLikedTuit = async (tid: string): Promise<Like[]> =>
         LikeModel
             .find({tuit: tid})
