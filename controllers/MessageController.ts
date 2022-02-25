@@ -9,13 +9,13 @@ import MessageControllerI from "../interfaces/MessageControllerI";
  * @class MessageController Implements RESTful Web service API for messages resource.
  * Defines the messaging HTTP endpoints:
  * <ul>
- *     <li>GET /api/users/:uid/sends to retrieve all the messages sent by a user
+ *     <li>GET /api/users/:uid/messages to retrieve all the messages sent by a user
  *     </li>
- *     <li>GET /api/users/:uid/receives to retrieve all the messages sent to a user
+ *     <li>GET /api/users/:uid/inboxes to retrieve all the messages sent to a user
  *     </li>
- *     <li>GET /api/users/:uid/sents/:xuid to retrieve all message sent between two users
+ *     <li>GET /api/users/:uid/messages/:xuid to retrieve all message sent between two users
  *     </li>
- *     <li>POST /api/users/:uid/sents/:xuid to sent message to user
+ *     <li>POST /api/users/:uid/messages/:xuid to sent message to user
  *     </li>
  *     <li>DELETE /api/messages/:mid to delete message </li>
  *     <li>PUT /api/messages/:mid to update message</li>
@@ -36,10 +36,10 @@ export default class MessageController implements MessageControllerI {
     public static getInstance = (app: Express): MessageController => {
         if (MessageController.messageController === null) {
             MessageController.messageController = new MessageController();
-            app.get("/api/users/:uid/receives", MessageController.messageController.findAllMessagesToUser);
-            app.get("/api/users/:uid/sents", MessageController.messageController.findAllMessagesFromUser);
-            app.get("/api/users/:uid/sents/:xuid", MessageController.messageController.findUserMessagesUser);
-            app.post("/api/users/:uid/sents/:xuid", MessageController.messageController.sendMessage);
+            app.get("/api/users/:uid/inboxes", MessageController.messageController.findAllMessagesToUser);
+            app.get("/api/users/:uid/messages", MessageController.messageController.findAllMessagesFromUser);
+            app.get("/api/users/:uid/messages/:xuid", MessageController.messageController.findUserMessagesUser);
+            app.post("/api/users/:uid/messages/:xuid", MessageController.messageController.sendMessage);
             app.put("/api/messages/:mid", MessageController.messageController.updateMessage);
             app.delete("/api/messages/:mid", MessageController.messageController.deleteMessage);
         }
@@ -96,10 +96,24 @@ export default class MessageController implements MessageControllerI {
         MessageController.messageDao.sendMessage(req.params.uid, req.params.uxid, req.body)
             .then(message => res.json(message));
 
+    /**
+     * Records that a message was updated
+     * @param {Request} req Represents request from client, including the path
+     * parameter mid representing the message being deleted
+     * @param {Response} res Represents response to client, including the
+     * status on whether updating the message was successful or not
+     */
     updateMessage = (req: Request, res: Response) =>
         MessageController.messageDao.updateMessage(req.params.mid, req.body)
             .then((status) => res.send(status));
 
+    /**
+     * Records that a message was deleted
+     * @param {Request} req Represents request from client, including the path
+     * parameter mid representing the message being deleted
+     * @param {Response} res Represents response to client, including the
+     * status on whether deleting the message was successful or not
+     */
     deleteMessage = (req: Request, res: Response) =>
         MessageController.messageDao.deleteMessage(req.params.mid)
             .then((status) => res.send(status));

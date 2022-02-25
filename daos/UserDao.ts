@@ -62,11 +62,6 @@ export default class UserDao implements UserDaoI {
             {_id: uid},
             {$set: user});
 
-    updateUserSalaryByUsername = async (username: string, salary: number): Promise<any> =>
-        UserModel.updateOne(
-            {username},
-            {$set: {salary: salary}});
-
     /**
      * Removes user from the database.
      * @param {string} uid Primary key of user to be removed
@@ -82,10 +77,4 @@ export default class UserDao implements UserDaoI {
      */
     deleteAllUsers = async (): Promise<any> =>
         UserModel.deleteMany({});
-
-    findUserByCredentials = async (username: string, password: string): Promise<any> =>
-        UserModel.findOne({username: username, password: password});
-
-    findUserByUsername = async (username: string): Promise<any> =>
-        UserModel.findOne({username});
 };
