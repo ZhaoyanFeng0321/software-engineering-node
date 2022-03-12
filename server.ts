@@ -24,11 +24,15 @@ import BookmarkController from "./controllers/BookmarkController";
 import MessageController from "./controllers/MessageController";
 
 const app = express();
+const cors = require('cors');
 mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(express.json());
+app.use(cors());
+//app.use(cors());
+// app.use(bodyParser.urlencoded({
+//     extended: true
+// }));
 
 const userController = UserController.getInstance(app);
 const tuitController = TuitController.getInstance(app);
