@@ -28,6 +28,7 @@ const cors = require('cors');
 mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 //app.use(cors());
 // app.use(bodyParser.urlencoded({
