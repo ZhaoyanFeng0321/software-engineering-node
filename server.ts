@@ -5,50 +5,80 @@
  *     <li>users</li>
  *     <li>tuits</li>
  *     <li>likes</li>
+ *     <li>dislikes<li>
  *     <li>follows</li>
  *     <li>bookmarks</li>
  *     <li>messages</li>
+ *     <li>authentication</li>
+ *     <li>group</li>
+ *     <li>session</li>
  * </ul>
  *
  * Connects to a remote MongoDB instance hosted on the Atlas cloud database
  * service
  */
 import express from 'express';
-import mongoose from "mongoose";
 import UserController from "./controllers/UserController";
-import TuitController from "./controllers/TuitController";
+import mongoose from 'mongoose';
 import bodyParser from "body-parser";
-import LikeController from "./controllers/LikeController";
+import TuitController from "./controllers/TuitController";
 import FollowController from "./controllers/FollowController";
 import BookmarkController from "./controllers/BookmarkController";
 import MessageController from "./controllers/MessageController";
+import LikeController from "./controllers/LikeController";
+import AuthenticationController from "./controllers/AuthenticationController";
+import SessionController from "./controllers/SessionController";
+import GroupController from "./controllers/GroupController";
+import DisikeController from "./controllers/DislikeController";
+
+// const dotenv = require("dotenv")
+// dotenv.config()
+
+var cors = require('cors')
+const session = require("express-session");
 
 const app = express();
-const cors = require('cors');
+app.use(bodyParser.json());
+app.use(cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'http://localhost:3000/', process.env.FRONTEND]
+}));
+
+let sess = {
+    secret: process.env.SECRET,
+    saveUninitialized: true,
+    resave: true,
+    cookie: {
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+        secure: process.env.ENV
+    }
+};
+
+if (process.env.ENV === 'PRODUCTION') {
+    app.set('trust proxy', 1) // trust first proxy
+}
+
+
 mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
-app.use(express.json());
-app.use(bodyParser.json());
-app.use(cors());
-//app.use(cors());
-// app.use(bodyParser.urlencoded({
-//     extended: true
-// }));
+app.use(session(sess))
+app.use(express.json())
 
+app.get('/', (req, res) =>
+    res.send('This app is running!'));
+
+
+// create RESTful Web service API
 const userController = UserController.getInstance(app);
 const tuitController = TuitController.getInstance(app);
 const likeController = LikeController.getInstance(app);
+const dislikeController = DisikeController.getInstance(app);
 const followController = FollowController.getInstance(app);
 const bookmarkController = BookmarkController.getInstance(app);
 const messageController = MessageController.getInstance(app);
-
-app.get('/hello', (req, res) =>
-    res.send('Hello World!'));
-
-app.get('/add/:a/:b', (req, res) => {
-    res.send(req.params.a + req.params.b);
-})
-
+AuthenticationController(app);
+SessionController(app);
+GroupController(app);
 /**
  * Start a server listening at port 4000 locally
  * but use environment variable PORT on Heroku if available.

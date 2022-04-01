@@ -2,17 +2,16 @@
  * @file Implements DAO managing data storage of messages. Uses mongoose MessageModel
  * to integrate with MongoDB
  */
-
-import MessageModel from "../mongoose/messages/MessageModel";
-import Message from "../models/messages/Message";
 import MessageDaoI from "../interfaces/MessageDaoI";
+import Message from "../models/messages/Message";
+import messageModel from "../mongoose/messages/MessageModel";
 
 /**
  * @class MessageDao Implements Data Access Object managing data storage
- * of messages
+ * of Message
  * @property {MessageDao} messageDao Private single instance of MessageDao
  */
-export default class MessageDao implements MessageDaoI{
+export default class MessageDao implements MessageDaoI {
     private static messageDao: MessageDao | null = null;
 
     /**
@@ -20,66 +19,75 @@ export default class MessageDao implements MessageDaoI{
      * @returns MessageDao
      */
     public static getInstance = (): MessageDao => {
-        if(MessageDao.messageDao === null) {
+        if (MessageDao.messageDao === null) {
             MessageDao.messageDao = new MessageDao();
         }
         return MessageDao.messageDao;
     }
 
-    private constructor() {}
+    private constructor() {
+    }
 
     /**
-     * Uses MessageModel to retrieve all messages sent by user
-     * @param {String} uid Key for user sending messages
-     * @returns Promise to be notified when messages are retrieved from database
+     * Uses MessageModel to retrieve all message documents that belong to a user from messages collection
+     * @param {string} uid User's Primary key
+     * @returns Promise To be notified when the messages are retrieved from
+     * database
      */
-    findAllMessagesFromUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({from: uid});
+    findAllMessagesByUser = async (uid: string): Promise<Message[]> =>
+        messageModel.find({$or: [{to: uid}, {from: uid}]})
+            .populate("to")
+            .populate("from")
+            .exec();
 
     /**
-     * Uses MessageModel to retrieve all messages received by user
-     * @param {String} uid Key for user that received messages
-     * @returns Promise to be notified when messages are retrieved from database
+     * Uses MessageModel to retrieve all message documents that a user received from messages collection
+     * @param {string} uid User's Primary key
+     * @returns Promise To be notified when the messages are retrieved from
+     * database
      */
-    findAllMessagesToUser = async (uid: string): Promise<Message[]> =>
-        MessageModel.find({to: uid});
+    findAllMessagesUserReceived = async (uid: string): Promise<Message[]> =>
+        messageModel.find({to: uid})
+            .populate("from")
+            .exec();
 
     /**
-     * Uses MessageModel to retrieve all messages sent from a user to a user
-     * @param {String} uid Key for user sending messages
-     * @param {String} xuid Key for user receiving message
-     * @returns Promise to be notified when messages are retrieved from database
+     * Uses MessageModel to retrieve all message documents that a user sent from messages collection
+     * @param {string} uid User's Primary key
+     * @returns Promise To be notified when the messages are retrieved from
+     * database
      */
-    findUserMessagesUser = async (uid: string, xuid: string): Promise<Message[]> =>
-        MessageModel.find({from: uid, to: xuid});
-
+    findAllMessagesUserSent = async (uid: string): Promise<Message[]> =>
+        messageModel.find({from: uid})
+            .populate("to")
+            .exec();
     /**
-     * Insert message instance into database
-     * @param {String} uid Key for user sending message
-     * @param {String} xuid Key for user receiving message
-     * @param {Message} message Message Instance to be inserted into database
-     * @returns Promise to be notified when message is inserted into database
-     */
-    sendMessage = async (uid: string, xuid: string, message: Message): Promise<Message> =>
-        MessageModel.create({...message, from: uid, to: xuid});
-
-    /**
-     * Update message
-     * @param {String} mid Key for message being removed
-     @param {Message} message Message Instance to be inserted into database
-     * @returns Promise to be notified when message is updated into database
-     */
-    updateMessage = async (mid: string, message: Message): Promise<any> =>
-        MessageModel.updateOne(
-            {_id: mid},
-            {$set: message});
-
-    /**
-     * Removes message from database
-     * @param {String} mid Key for message being removed
-     * @returns Promise to be notified when message is removed from database
+     * Removes a message from the database
+     * @param {string} mid Message's Primary key
+     * @return Promise To be notified when message is removed from the database
      */
     deleteMessage = async (mid: string): Promise<any> =>
-        MessageModel.deleteOne({_id: mid});
+        messageModel.deleteOne({_id: mid});
+
+    /**
+     * Updates a message from the database
+     * @param {string} mid Message's Primary key
+     * @param {Message} message Message object containing properties and their new values
+     * @return Promise To be notified when message is updated in the database
+     */
+    updateMessage = async (mid: string, message: Message): Promise<any> =>
+        messageModel.updateOne({_id: mid}, {$set: message});
+
+    /**
+     * Inserts a message into the database
+     * @param {string} uid User's Primary key
+     * @param {string} uid1 Another User's Primary key
+     * @param {Message} message Message Instance to be inserted into the database
+     * @return Promise To be notified when message is inserted in the database
+     */
+    userMessagesUser = async (uid: string, uid1: string, message: Message): Promise<Message> =>
+        messageModel.create({...message, from: uid, to: uid1});
 
 }
+
+

@@ -1,18 +1,15 @@
 /**
- * @file Declares Bookmark data type representing relationship between
- * users, as in user bookmarks a tuit
+ * @file Declares Bookmark data type representing bookmarks of tuits
  */
 import User from "../users/User";
 import Tuit from "../tuits/Tuit";
 
 /**
- * @typedef Bookmark Represents bookmarks relationship between a user and a tuit,
- * as in a user bookmarks a tuit
- * @property {Tuit} bookmarkedTuit Tuit being bookmarked
- * @property {User} bookmarkedUser User bookmarking the tuit
+ * @typedef Bookmark Represents bookmarks of tuits
+ * @property {Tuit} bookmarkedTuit Bookmarked Tuit
+ * @property {User} bookmarkedBy User who bookmarked Tuit
  */
-
 export default interface Bookmark {
     bookmarkedTuit: Tuit,
-    bookmarkedUser: User
-};
+    bookmarkedBy: User
+}

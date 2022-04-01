@@ -2,8 +2,8 @@
  * @file Implements DAO managing data storage of users. Uses mongoose UserModel
  * to integrate with MongoDB
  */
-import UserModel from "../mongoose/users/UserModel";
 import User from "../models/users/User";
+import UserModel from "../mongoose/users/UserModel";
 import UserDaoI from "../interfaces/UserDaoI";
 
 /**
@@ -19,13 +19,14 @@ export default class UserDao implements UserDaoI {
      * @returns UserDao
      */
     public static getInstance = (): UserDao => {
-        if(UserDao.userDao === null) {
+        if (UserDao.userDao === null) {
             UserDao.userDao = new UserDao();
         }
         return UserDao.userDao;
     }
 
-    private constructor() {}
+    private constructor() {
+    }
 
     /**
      * Uses UserModel to retrieve all user documents from users collection
@@ -34,7 +35,6 @@ export default class UserDao implements UserDaoI {
      */
     findAllUsers = async (): Promise<User[]> =>
         UserModel.find().exec();
-
     /**
      * Uses UserModel to retrieve single user document from users collection
      * @param {string} uid User's primary key
@@ -71,12 +71,27 @@ export default class UserDao implements UserDaoI {
         UserModel.deleteOne({_id: uid});
 
     /**
-     * Removes all users from the database. Useful for testing
-     * @returns Promise To be notified when all users are removed from the
-     * database
+     * Finds user from the database.
+     * @param {string} username user's username
+     * @param {string} password user's password
+     * @returns Promise To be notified when user is found in the database
      */
-    deleteAllUsers = async (): Promise<any> =>
-        UserModel.deleteMany({});
-    deleteUsersByUsername = async (username: string): Promise<any> =>
-        UserModel.deleteMany({username});
+    findUserByCredentials = async (username: string, password: string): Promise<any> =>
+        UserModel.findOne({username: username, password: password});
+
+    /**
+     * Finds user from the database.
+     * @param {string} username user's username
+     * @returns Promise To be notified when user is found in the database
+     */
+    findUserByUsername = async (username: string): Promise<any> =>
+        UserModel.findOne({username});
+
+    /**
+     * Deletes a user from the database.
+     * @param {string} username user's username
+     * @returns Promise To be notified when user is deleted from the database
+     */
+    deleteUserByUsername = async (username: string): Promise<any> =>
+        UserModel.deleteMany({username: username});
 };

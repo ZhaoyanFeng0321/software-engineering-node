@@ -1,38 +1,43 @@
-import mongoose from "mongoose";
-import User from "../../models/users/User";
 /**
- * @typedef User Represents a user on Tuitter
- * @property {String} username Username to log in
- * @property {String} password Password to log in
- * @property {String} firstName First name of user
- * @property {String} lastName Last name of user
- * @property {String} email Email of user
- * @property {String} profilePhoto Profile photo for user
- * @property {String} headerImage Header image for user
- * @property {String} accountType Type of account user has
- * @property {String} martialStatus Martial status of user
- * @property {String} biography Biography of user
- * @property {Date} dateOfBirth Birth date of user
- * @property {Location} location Location of user
- * @property {Number} salary Salary of user
+ * @file Implements mongoose schema for users
  */
-const UserSchema = new mongoose.Schema<User>({
-    username: {type: String, required: true, default: `testusername${Date.now()}`},
-    password: {type: String, required: true, default: `testpassword${Date.now()}`},
+import mongoose from "mongoose";
+
+/**
+ * @typedef User Represents users of Tuiter
+ * @property {string} username User's username
+ * @property {string} password User's password
+ * @property {string} firstName User's first name
+ * @property {string} lastName User's last name
+ * @property {string} email User's email
+ * @property {string} profilePhoto User's profile photo
+ * @property {string} headerImage User's Header Image
+ * @property {string} accountType User's account type from 'PERSONAL', 'ACADEMIC', 'PROFESSIONAL'
+ * default is 'PERSONAL'
+ * @property {string} maritalStatus User's Marital Status from 'MARRIED', 'SINGLE', 'WIDOWED'
+ * default is 'SINGLE'
+ * @property {string} biography User's biography
+ * @property {Date} dateOfBirth User's Birth date
+ * @property {Date} joined User's joined date
+ * @property {Location} location User's location
+ */
+const UserSchema = new mongoose.Schema({
+    username: {type: String, required: true},
+    password: {type: String, required: true},
     firstName: String,
     lastName: String,
-    email: {type: String, required: true, default: `testemail${Date.now()}`},
+    email: String,
     profilePhoto: String,
     headerImage: String,
+    accountType: {type: String, default: 'PERSONAL', enum: ['PERSONAL', 'ACADEMIC', 'PROFESSIONAL']},
+    maritalStatus: {type: String, default: 'SINGLE', enum: ['MARRIED', 'SINGLE', 'WIDOWED']},
     biography: String,
     dateOfBirth: Date,
-    accountType: {type: String, enum: ["PERSONAL", "ACADEMIC", "PROFESSIONAL"]},
-    maritalStatus: {type: String, enum: ["MARRIED", "SINGLE", "WIDOWED"]},
+    joined: {type: Date, default: Date.now},
     location: {
         latitude: Number,
         longitude: Number
-    },
-    salary: {type: Number, default: 50000}
-}, {collection: "users"});
+    }
+}, {collection: 'users'});
 
 export default UserSchema;

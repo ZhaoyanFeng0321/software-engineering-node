@@ -1,10 +1,13 @@
+/**
+ * @file Implements mongoose schema for follows
+ */
 import mongoose, {Schema} from "mongoose";
 import Follow from "../../models/follows/Follow";
 
 /**
- * @typedef Follow Represents a user following another user
- * @property {ObjectId} userFollowed ID of user who is being followed
- * @property {ObjectId} userFollowing ID of user who is following
+ * @typedef Bookmark Represents follow relationship between users in Tuiter
+ * @property {ObjectId} userFollowed the ID of User who follows another user
+ * @property {ObjectId} userFollowing the ID of User who is followed by another user
  */
 const FollowSchema = new mongoose.Schema<Follow>({
     userFollowed: {type: Schema.Types.ObjectId, ref: "UserModel"},

@@ -1,19 +1,18 @@
 /**
- * @file Declares Message data type representing relationship between
- * users, as in user messages another user
+ * @file Declares Message data type representing users message users on Tuiter
  */
 import User from "../users/User";
 
 /**
- * @typedef Message Represents messages relationship between a user and another user,
- * as in a user messages another user
- * @property {User} from User messaging another user
- * @property {User} to User messaged by another user
+ * @typedef Message Represents users message users on Tuiter
+ * @property {string} message text content of the message
+ * @property {User} to User who is the receiver of the message
+ * @property {User} from  User who is the sender of the message
+ * @property {Date} sentOn the date of the message is sent
  */
-
 export default interface Message {
     message: string,
-    from: User,
     to: User,
-    sentOn?: Date
-};
+    from: User,
+    sentOn: Date
+}
