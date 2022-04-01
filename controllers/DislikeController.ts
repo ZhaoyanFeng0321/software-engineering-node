@@ -158,7 +158,7 @@ export default class DisikeController implements DislikeControllerI {
     }
     /**
      * Records that a user no longer dislikes a tuit from the database
-     * @param {Request} req Represents request from client, including the
+     * @param {Request} req represents request from client, including the
      * path parameters uid and tid representing the user that is unliking
      * the tuit and the tuit being unliked
      * @param {Response} res Represents response to client, including status
