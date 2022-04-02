@@ -34,6 +34,8 @@ app.use(cors({
     credentials: true,
     //origin: 'http://localhost:3000'
     origin: "https://resonant-semifreddo-41a6ed.netlify.app"
+    //origin: process.env.CORS_ORIGIN
+
 }));
 
 
