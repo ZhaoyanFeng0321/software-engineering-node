@@ -1,10 +1,5 @@
 /**
- * @file Declares Location data type representing location on Tuiter
- */
-/**
- * @typedef Location Represents location on Tuiter
- * @property {number} latitude latitude of the location
- * @property {number} longitude longitude of the location
+ * @file Location data model
  */
 export default class Location {
     public latitude: number = 0.0;

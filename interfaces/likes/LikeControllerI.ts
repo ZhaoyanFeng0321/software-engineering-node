@@ -1,14 +1,13 @@
 import {Request, Response} from "express";
 
-/**
- * @file Declares API for Likes related Controller
- */
 export default interface LikeControllerI {
-    findAllUsersThatLikedTuit(req: Request, res: Response): void;
+    findAllUsersThatLikedTUit(req: Request, res: Response): void;
 
     findAllTuitsLikedByUser(req: Request, res: Response): void;
 
-    userLikesTuit(req: Request, res: Response): void;
-
     userUnlikesTuit(req: Request, res: Response): void;
-};
+
+    deleteAllLikes(req: Request,res:Response):void;
+
+
+}

@@ -2,6 +2,7 @@
  * @file Declares Like data type representing relationship between
  * users and tuits, as in user likes a tuit
  */
+
 import Tuit from "../tuits/Tuit";
 import User from "../users/User";
 
@@ -11,8 +12,7 @@ import User from "../users/User";
  * @property {Tuit} tuit Tuit being liked
  * @property {User} likedBy User liking the tuit
  */
-
-export default interface Like {
+export default interface Like{
     tuit: Tuit,
     likedBy: User
 };

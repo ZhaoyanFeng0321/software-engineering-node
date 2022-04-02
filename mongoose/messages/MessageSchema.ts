@@ -1,19 +1,21 @@
 /**
  * @file Implements mongoose schema for messages
  */
-import mongoose, {Schema} from "mongoose";
+import mongoose,{Schema} from "mongoose";
+import Message from "../../models/messages/Message";
 
 /**
- * @typedef Message Represents users message users on Tuiter
- * @property {string} message text content of the message
- * @property {ObjectId} to the ID of the User who is the receiver of the message
- * @property {ObjectId} from the ID of the User who is the sender of the message
- * @property {Date} sentOn the date of the message is sent
+ * @typedef Message represent message in Tuiter
+ * @property {string} message the content of message
+ * @property {ObjectId} to the User Id who received message
+ * @property {ObjectId} from the User Id who sent message
+ * @property {date} sentOn the sent time of message
  */
-const MessageSchema = new mongoose.Schema({
+const MessageSchema = new mongoose.Schema<Message>({
     message: {type: String, required: true},
     to: {type: Schema.Types.ObjectId, ref: "UserModel"},
     from: {type: Schema.Types.ObjectId, ref: "UserModel"},
-    sentOn: {type: Date, default: Date.now}
-}, {collection: "messages"});
+    sentOn: {type: Date, default: Date.now},
+},{collection:"messages"});
+
 export default MessageSchema;

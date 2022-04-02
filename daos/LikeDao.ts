@@ -2,14 +2,14 @@
  * @file Implements DAO managing data storage of likes. Uses mongoose LikeModel
  * to integrate with MongoDB
  */
-import LikeDaoI from "../interfaces/LikeDaoI";
+import LikeDaoI from "../interfaces/likes/LikeDaoI";
 import LikeModel from "../mongoose/likes/LikeModel";
 import Like from "../models/likes/Like";
 
 /**
- * @class likeDao Implements Data Access Object managing data storage
+ * @class LikeDao Implements Data Access Object managing data storage
  * of Likes
- * @property {LikeDao} likeDao Private single instance of LikeDao
+ * @property {LikeDao} likeDao private single instance of LikeDao
  */
 export default class LikeDao implements LikeDaoI {
     private static likeDao: LikeDao | null = null;
@@ -29,62 +29,75 @@ export default class LikeDao implements LikeDaoI {
     }
 
     /**
-     * Uses LikeModel to retrieve all like documents that contain a specific tuit from likes collection
-     * @param {string} tid Tuit's primary key
-     * @returns Promise To be notified when likes are retrieved from the database
+     * Uses LikeModel to retrieve all likes documents with specific tuit from likes collection
+     * @returns Promise To be notified when the likes are retrieved from
+     * database
      */
     findAllUsersThatLikedTuit = async (tid: string): Promise<Like[]> =>
-        LikeModel
-            .find({tuit: tid})
+        LikeModel.find({tuit: tid})
             .populate("likedBy")
             .exec();
+
     /**
-     * Uses LikeModel to retrieve all like documents that contain a specific user from likes collection
-     * @param {string} uid User's primary key
-     * @returns Promise To be notified when likes are retrieved from the database
+     * Uses LikeModel to retrieve all likes documents with specific user from likes collection
+     * @returns Promise To be notified when the likes are retrieved from
+     * database
      */
     findAllTuitsLikedByUser = async (uid: string): Promise<Like[]> =>
-        LikeModel
-            .find({likedBy: uid})
+        LikeModel.find({likedBy: uid})
             .populate({
                 path: "tuit",
                 populate: {
-                    path: "postedBy"
+                    path:"postedBy"
                 }
             })
             .exec();
+
     /**
      * Inserts like instance into the database
-     * @param {string} uid User's primary key
      * @param {string} tid Tuit's primary key
+     * @param {string} uid User's primary key
      * @returns Promise To be notified when like is inserted into the database
      */
-    userLikesTuit = async (uid: string, tid: string): Promise<any> =>
+    userLikeTuit = async (uid: string, tid: string): Promise<any> =>
         LikeModel.create({tuit: tid, likedBy: uid});
 
     /**
-     * Removes like instance from the database
-     * @param {string} uid User's primary key
+     * Removes like from the database
      * @param {string} tid Tuit's primary key
+     * @param {string} uid User's primary key
      * @returns Promise To be notified when like is removed from the database
      */
     userUnlikesTuit = async (uid: string, tid: string): Promise<any> =>
         LikeModel.deleteOne({tuit: tid, likedBy: uid});
 
     /**
-     * Retrieved a like instance from the database
-     * @param {string} uid User's primary key
-     * @param {string} tid Tuit's primary key
-     * @returns Promise To be notified when like is retrieved from the database
+     * Removes all likes from the database. Useful for testing
+     * @returns Promise To be notified when all likes are removed from the
+     * database
      */
-    isUserlikesTuit = async (uid:string, tid:string) : Promise<any> =>
+    deleteAllLike = async (): Promise<any> =>
+        LikeModel.deleteMany();
+
+    /**
+     * Check like instance is exist
+     * @param {string} tid Tuit's primary key
+     * @param {string} uid User's primary key
+     * @returns Promise To be notified when find the like record
+     */
+    findUserLikesTuit = async (uid: string, tid: string): Promise<any> =>
         LikeModel.findOne({tuit: tid, likedBy: uid});
 
     /**
-     * Count like instance for a tuit from the database
+     * Count how many likes for specific tuit
      * @param {string} tid Tuit's primary key
-     * @returns Promise To be notified when likes are counted from the database
+     * @returns Promise To be notified when count finish
      */
-    countLikesForTuit = async (tid: string) : Promise<any> =>
+    countHowManyLikedTuit = async (tid: string): Promise<any> =>
         LikeModel.count({tuit: tid});
+
 }
+
+
+
+

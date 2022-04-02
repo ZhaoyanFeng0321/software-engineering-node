@@ -5,79 +5,72 @@
  *     <li>users</li>
  *     <li>tuits</li>
  *     <li>likes</li>
- *     <li>dislikes<li>
  *     <li>follows</li>
  *     <li>bookmarks</li>
  *     <li>messages</li>
- *     <li>authentication</li>
- *     <li>group</li>
- *     <li>session</li>
  * </ul>
  *
  * Connects to a remote MongoDB instance hosted on the Atlas cloud database
  * service
  */
-import express from 'express';
+import express from "express";
+import mongoose from "mongoose";
+
 import UserController from "./controllers/UserController";
-import mongoose from 'mongoose';
-import bodyParser from "body-parser";
 import TuitController from "./controllers/TuitController";
+import LikeController from "./controllers/LikeController";
 import FollowController from "./controllers/FollowController";
 import BookmarkController from "./controllers/BookmarkController";
 import MessageController from "./controllers/MessageController";
-import LikeController from "./controllers/LikeController";
 import AuthenticationController from "./controllers/AuthenticationController";
 import SessionController from "./controllers/SessionController";
-import GroupController from "./controllers/GroupController";
-import DisikeController from "./controllers/DislikeController";
-
-const dotenv = require("dotenv")
-dotenv.config()
-
-var cors = require('cors')
+import DislikeController from "./controllers/DislikeController";
+const cors = require("cors");
 const session = require("express-session");
+mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
 const app = express();
-app.use(bodyParser.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'http://localhost:3000/']
+    origin: 'http://localhost:3000'
+    //origin: "https://spiffy-cajeta-8e1a89.netlify.app"
 }));
 
+
 let sess = {
-    secret: process.env.SECRET,
+    secret: process.env.EXPRESS_SESSION_SECRET,
     saveUninitialized: true,
     resave: true,
     cookie: {
-        secure: false
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
     }
-};
-
-if (process.env.ENV === 'PRODUCTION') {
-    app.set('trust proxy', 1) // trust first proxy
-    sess.cookie.secure = true // serve secure cookies
 }
 
-mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1) // trust first proxy
+}
 
 app.use(session(sess))
-app.use(express.json())
+app.use(express.json());
 
-app.get('/', (req, res) =>
-    res.send('This app is running!'));
-
-
-// create RESTful Web service API
 const userController = UserController.getInstance(app);
 const tuitController = TuitController.getInstance(app);
 const likeController = LikeController.getInstance(app);
-const dislikeController = DisikeController.getInstance(app);
 const followController = FollowController.getInstance(app);
 const bookmarkController = BookmarkController.getInstance(app);
 const messageController = MessageController.getInstance(app);
-AuthenticationController(app);
+const dislikeController = DislikeController.getInstance(app);
+
+app.get('/hello', (req, res) =>
+    res.send('Hello World!'));
+
+app.get('/add/:a/:b', (req, res) => {
+    res.send(req.params.a + req.params.b);
+})
+
 SessionController(app);
-GroupController(app);
+AuthenticationController(app);
 
 /**
  * Start a server listening at port 4000 locally

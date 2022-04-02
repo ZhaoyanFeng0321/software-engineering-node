@@ -1,9 +1,7 @@
 import {Request, Response} from "express";
 
-/**
- * @file Declares API for User related Controller
- */
 export default interface UserControllerI {
+
     findAllUsers(req: Request, res: Response): void;
 
     findUserById(req: Request, res: Response): void;
@@ -13,4 +11,10 @@ export default interface UserControllerI {
     deleteUser(req: Request, res: Response): void;
 
     updateUser(req: Request, res: Response): void;
+
+    deleteAllUsers(req:Request,res:Response): void;
+
+    deleteUsersByUsername(req:Request,res:Response) : void;
+
+
 }
