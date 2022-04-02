@@ -32,8 +32,8 @@ mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tui
 const app = express();
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:3000'
-    //origin: "https://spiffy-cajeta-8e1a89.netlify.app"
+    //origin: 'http://localhost:3000'
+    origin: "https://resonant-semifreddo-41a6ed.netlify.app"
 }));
 
 
