@@ -78,6 +78,7 @@ const messageController = MessageController.getInstance(app);
 AuthenticationController(app);
 SessionController(app);
 GroupController(app);
+
 /**
  * Start a server listening at port 4000 locally
  * but use environment variable PORT on Heroku if available.

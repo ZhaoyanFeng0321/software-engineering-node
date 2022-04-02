@@ -6,6 +6,8 @@ import DislikeControllerI from "../interfaces/DislikeControllerI";
 import TuitDao from "../daos/TuitDao";
 import {Express, Request, Response} from "express";
 import DislikeDao from "../daos/DislikeDao";
+import LikeDao from "../daos/LikeDao";
+import LikeController from "./LikeController";
 
 /**
  * @class DislikeController Implements RESTful Web service API for likes resource.
@@ -20,8 +22,11 @@ import DislikeDao from "../daos/DislikeDao";
  *     <li>DELETE /api/users/:uid/unlikes/:tid to record that a user
  *     no longer likes a tuit
  *     </li>
+ *     <li>Get /api/users/:uid/dislikes/:tid to retrieve that a user dislikes a tuit or not
+ *     </li>
  * </ul>
- * @property {DislikeDao} dislikeDao Singleton DAO implementing likes CRUD operations
+ * @property {DislikeDao} dislikeDao Singleton DAO implementing disçlikes CRUD operations
+ * @property {TuitDao} tuitDao Singleton DAO implementing tuits CRUD operations
  * @property {DislikeController} dislikeController Singleton controller implementing
  * RESTful Web service API
  */
@@ -37,7 +42,7 @@ export default class DisikeController implements DislikeControllerI {
      * @return LikeController
      */
     public static getInstance = (app: Express): DisikeController => {
-        if(DisikeController.disikeController === null) {
+        if (DisikeController.disikeController === null) {
             DisikeController.disikeController = new DisikeController();
             app.get("/api/users/:uid/dislikes", DisikeController.disikeController.findAllTuitsDislikedByUser);
             app.get("/api/tuits/:tid/dislikes", DisikeController.disikeController.findAllUsersThatDislikedTuit);
@@ -48,7 +53,9 @@ export default class DisikeController implements DislikeControllerI {
         return DisikeController.disikeController;
     }
 
-    private constructor() {}
+    private constructor() {
+    }
+
     /**
      * Retrieves all users that disliked a tuit from the database
      * @param {Request} req Represents request from client, including the path
@@ -106,12 +113,10 @@ export default class DisikeController implements DislikeControllerI {
         } else {
             let tuit = await DisikeController.dislikeDao.isUserDislikesTuit(userId, req.params.tid);
             if (tuit) {
-                const data = {'dislike' : true};
-                console.log(data);
+                const data = {'dislike': true};
                 res.json(data);
             } else {
-                const data = {'dislike' : false};
-                console.log(data);
+                const data = {'dislike': false};
                 res.json(data);
             }
         }
@@ -139,26 +144,36 @@ export default class DisikeController implements DislikeControllerI {
             res.sendStatus(404)
         } else {
             const isDisliked = await DisikeController.dislikeDao.isUserDislikesTuit(userId, tuitId);
-            const targetTuit =  await DisikeController.tuitDao.findTuitById(tuitId);
+            const targetTuit = await DisikeController.tuitDao.findTuitById(tuitId);
             let dislikeCount = await DisikeController.dislikeDao.countDislikesForTuit(tuitId);
             if (isDisliked) {
-                console.log("Try to dislike -1");
-                await DisikeController.dislikeDao.userUndislikesTuit(userId, tuitId)
-                    .then(status => res.send(status));
                 targetTuit.stats.dislikes = dislikeCount - 1;
+                DisikeController.dislikeDao.userUndislikesTuit(userId, tuitId)
+                    .then(status => DisikeController.tuitDao.updateStats(tuitId, targetTuit.stats))
+                    .then(status => res.sendStatus(200));
+
             } else {
-                console.log("Try to dislike +1");
-                await DisikeController.dislikeDao.userDislikesTuit(userId, tuitId)
-                    .then(likes => res.json(likes));
                 targetTuit.stats.dislikes = dislikeCount + 1;
+                DisikeController.dislikeDao.userDislikesTuit(userId, tuitId)
+                    .then(status => DisikeController.tuitDao.updateStats(tuitId, targetTuit.stats))
+
+                const likeDAO = LikeDao.getInstance();
+                const isLiked = await likeDAO.isUserlikesTuit(userId, tuitId);
+                if (isLiked) {
+                    const likes = await likeDAO.countLikesForTuit(tuitId)
+                    targetTuit.stats.likes = likes - 1;
+                    likeDAO.userUnlikesTuit(userId, tuitId)
+                        .then(status => DisikeController.tuitDao.updateStats(tuitId, targetTuit.stats))
+                        .then(status => res.sendStatus(200));
+                } else {
+                    res.sendStatus(200);
+                }
             }
-            console.log("Try to update tuit");
-            await DisikeController.tuitDao.updateTuit(tuitId, targetTuit);
         }
     }
     /**
      * Records that a user no longer dislikes a tuit from the database
-     * @param {Request} req represents request from client, including the
+     * @param {Request} req Represents request from client, including the
      * path parameters uid and tid representing the user that is unliking
      * the tuit and the tuit being unliked
      * @param {Response} res Represents response to client, including status
