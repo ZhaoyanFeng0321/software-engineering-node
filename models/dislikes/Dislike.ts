@@ -6,7 +6,7 @@ import Tuit from "../tuits/Tuit";
 import User from "../users/User";
 
 /**
- * @typedef Dislike represents dislikes relationship between a user and a tuit,
+ * @typedef Dislike Represents dislikes relationship between a user and a tuit,
  * as in a user likes a tuit
  * @property {Tuit} tuit Tuit being disliked
  * @property {User} dislikedBy User dislikes the tuit

@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 
 /**
- * @file Declares API for dislikes related Controller
+ * @file Declares API for Dislikes related Controller
  */
 export default interface DislikeControllerI {
 

@@ -109,7 +109,7 @@ export default class TuitDao implements TuitDaoI {
      * @returns Promise To be notified when tuit is updated in the database
      */
     updateStats = async (tid :string, newStats: any) =>
-        TuitModel.updateOne(
-            {_id: tid},
-            {$set: {stats: newStats}});
+            TuitModel.updateOne(
+                {_id: tid},
+                {$set: {stats: newStats}});
 }
