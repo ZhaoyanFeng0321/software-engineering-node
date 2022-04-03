@@ -27,14 +27,14 @@ import SessionController from "./controllers/SessionController";
 import DislikeController from "./controllers/DislikeController";
 const cors = require("cors");
 const session = require("express-session");
-mongoose.connect('mongodb+srv://kimrine:kimrine123@cluster0.x1j4c.mongodb.net/a4?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://irisfeng:Aa970321@cluster0.enbum.mongodb.net/tuiter?retryWrites=true&w=majority');
 
 const app = express();
 app.use(cors({
     credentials: true,
     //origin: 'http://localhost:3000'
-    origin: "https://resonant-semifreddo-41a6ed.netlify.app"
-    //origin: process.env.CORS_ORIGIN
+    //origin: "https://resonant-semifreddo-41a6ed.netlify.app"
+    origin: process.env.CORS_ORIGIN
 
 }));
 
